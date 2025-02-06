@@ -2,7 +2,6 @@ package no.hvl.dat110.rpc;
 
 import java.nio.ByteBuffer;
 import java.util.Arrays;
-import no.hvl.dat110.TODO;
 
 public class RPCUtils {
 	
@@ -36,7 +35,6 @@ public class RPCUtils {
 	}
 	
 	public static void unmarshallVoid(byte[] data) {
-		return;
 	}
 
 	// convert boolean to a byte array representation

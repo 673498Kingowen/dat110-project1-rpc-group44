@@ -3,11 +3,9 @@ package no.hvl.dat110.system.sensor;
 import no.hvl.dat110.rpc.RPCServer;
 import no.hvl.dat110.system.controller.Common;
 
-import java.io.IOException;
-
 public class SensorDevice {
 
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) {
 
 		System.out.println("Sensor server starting ...");
 		

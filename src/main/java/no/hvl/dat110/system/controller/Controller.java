@@ -7,46 +7,51 @@ import no.hvl.dat110.rpc.RPCClientStopStub;
 import java.io.IOException;
 
 public class Controller  {
-	
-	private static int N = 5;
-	
-	public static void main (String[] args) throws IOException {
-		RPCClient displayclient,sensorclient;
-		
-		System.out.println("Controller starting ...");
-				
-		// create RPC clients for the system
-		displayclient = new RPCClient(Common.DISPLAYHOST,Common.DISPLAYPORT);
-		sensorclient = new RPCClient(Common.SENSORHOST,Common.SENSORPORT);
 
-		displayclient.connect();
-		sensorclient.connect();
+	public static void main(String[] args) {
+		RPCClient displayclient = null, sensorclient = null;
 
-		DisplayStub display = new DisplayStub(displayclient);
-		SensorStub sensor = new SensorStub(sensorclient);
+			System.out.println("Controller starting ...");
 
+			// Create RPC clients for the system
+			displayclient = new RPCClient(Common.DISPLAYHOST, Common.DISPLAYPORT);
+			sensorclient = new RPCClient(Common.SENSORHOST, Common.SENSORPORT);
 
-		for (int i = 0; i < N; i++) {
-			int temp = sensor.read();
-			display.write(String.valueOf(temp));
-		}
-		// TODO - START
-		// setup stop methods in the RPC middleware
-		RPCClientStopStub stopdisplay = new RPCClientStopStub(displayclient);
-		RPCClientStopStub stopsensor = new RPCClientStopStub(sensorclient);
-		// create local display and sensor stub objects
-		// connect to sensor and display RPC servers - using the RPCClients
-		// read value from sensor using RPC and write to display using RPC
+			try {
+				displayclient.connect();
+			} catch (Exception e) {
+				System.out.println("Error connecting to display client: " + e.getMessage());
+			}
 
-		// TODO - END
-		
-		stopdisplay.stop();
-		stopsensor.stop();
-	
-		displayclient.disconnect();
-		sensorclient.disconnect();
-		
-		System.out.println("Controller stopping ...");
-		
+			try {
+				sensorclient.connect();
+			} catch (Exception e) {
+				System.out.println("Error connecting to sensor client: " + e.getMessage());
+			}
+
+			displayclient.connect();
+			sensorclient.connect();
+
+			DisplayStub display = new DisplayStub(displayclient);
+			SensorStub sensor = new SensorStub(sensorclient);
+
+			int n = 5;
+			for (int i = 0; i < n; i++) {
+				System.out.println("Reading from sensor ...");
+				int temp = sensor.read();
+				System.out.println("Temperature read: " + temp);
+				display.write(String.valueOf(temp));
+			}
+
+			RPCClientStopStub stopdisplay = new RPCClientStopStub(displayclient);
+			RPCClientStopStub stopsensor = new RPCClientStopStub(sensorclient);
+
+			stopdisplay.stop();
+			stopsensor.stop();
+
+			displayclient.disconnect();
+			sensorclient.disconnect();
+
+			System.out.println("Controller stopping ...");
 	}
 }

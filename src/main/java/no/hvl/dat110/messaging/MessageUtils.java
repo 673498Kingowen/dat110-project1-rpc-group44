@@ -2,8 +2,6 @@ package no.hvl.dat110.messaging;
 
 import java.util.Arrays;
 
-import no.hvl.dat110.TODO;
-
 public class MessageUtils {
 
 	public static final int SEGMENTSIZE = 128;
@@ -24,7 +22,8 @@ public class MessageUtils {
 	public static Message decapsulate(byte[] segment) {
 		int length = segment[0];
 		byte[] data = Arrays.copyOfRange(segment, 1, length + 1);
+		System.out.println("Decapsulating message: " + Arrays.toString(data));
 		return new Message(data);
 	}
-	
+
 }

@@ -3,53 +3,44 @@ package no.hvl.dat110.messaging;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Arrays;
 
-import no.hvl.dat110.TODO;
 
 public class MessagingServer {
 
-	// server-side socket for accepting incoming TCP connections
-	private ServerSocket welcomeSocket;
+	private final ServerSocket welcomeSocket;
 
-	public MessagingServer(int port) {
-
-		try {
-
+	public MessagingServer(int port)  {
+		try{
 			this.welcomeSocket = new ServerSocket(port);
-
 		} catch (IOException ex) {
+			System.out.println("Error establishing server: " + ex.getMessage());
+			ex.printStackTrace();
+			throw new RuntimeException("Could not establish server");
+		}
+	}
 
-			System.out.println("Messaging server: " + ex.getMessage());
+	public MessageConnection accept() {
+		try {
+			System.out.println(" Waiting for client connection on port " + welcomeSocket.getLocalPort() + "...");
+			Socket socket = welcomeSocket.accept();
+			System.out.println(" Client connected from " + socket.getInetAddress() + ":" + socket.getPort());
+			MessageConnection connection = new MessageConnection(socket);
+			return connection;
+		} catch (IOException ex) {
+			System.err.println(" Error accepting client connection: " + ex.getMessage());
+			return null;
+		}
+	}
+
+
+
+	public void stop() {
+		try {
+            welcomeSocket.close();
+        } catch (IOException ex) {
+			System.out.println("Error stopping server: " + ex.getMessage());
 			ex.printStackTrace();
 		}
 	}
-
-	// accept an incoming connection from a client
-	public MessageConnection accept() {
-
-		MessageConnection connection = null;
-		try {
-			Socket socket = welcomeSocket.accept();
-			return new MessageConnection(socket);
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-
-
-	}
-
-	public void stop() {
-
-		if (welcomeSocket != null) {
-
-			try {
-				welcomeSocket.close();
-			} catch (IOException ex) {
-
-				System.out.println("Messaging server: " + ex.getMessage());
-				ex.printStackTrace();
-			}
-		}
-	}
-
 }

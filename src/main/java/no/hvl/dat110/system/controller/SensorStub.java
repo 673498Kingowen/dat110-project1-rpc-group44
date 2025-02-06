@@ -11,17 +11,12 @@ public class SensorStub extends RPCLocalStub {
 		super(rpcclient);
 	}
 
-	public static int read() throws IOException {
+	public static int read() {
 
-		// marshall parameter to read call (void parameter)
-		byte[] request = RPCUtils.marshallVoid();
+        byte[] request = RPCUtils.marshallVoid();
+        byte[] response = rpcclient.call((byte) Common.READ_RPCID, request);
 
-		// make remote procedure call for read
-		byte[] response = rpcclient.call((byte)Common.READ_RPCID, request);
-
-		// unmarshall the return value from the call (an integer)
-		int temp = RPCUtils.unmarshallInteger(response);
-
-		return temp;
-	}
+        int temp = RPCUtils.unmarshallInteger(response);
+        return temp;
+    }
 }

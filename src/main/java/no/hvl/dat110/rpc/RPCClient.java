@@ -1,9 +1,7 @@
 package no.hvl.dat110.rpc;
 
-import no.hvl.dat110.TODO;
 import no.hvl.dat110.messaging.*;
-
-import java.io.IOException;
+import no.hvl.dat110.system.controller.Common;
 
 public class RPCClient {
 
@@ -12,23 +10,23 @@ public class RPCClient {
 
 	// underlying messaging connection used for RPC communication
 	private MessageConnection connection;
-	
+
 	public RPCClient(String server, int port) {
 		msgclient = new MessagingClient(server, port);
 	}
-	
+
 	public void connect() {
-		msgclient = new MessagingClient(MessageUtils.MESSAGINGHOST, MessageUtils.MESSAGINGPORT);
-	}
-	
+        msgclient = new MessagingClient(Common.DISPLAYHOST, Common.DISPLAYPORT);
+        connection = msgclient.connect();
+    }
+
 	public void disconnect() {
-		connection.close();
-	}
+        connection.close();
+    }
 
-	public byte[] call(byte rpcid, byte[] param) throws IOException {
-		connection.send(new Message(RPCUtils.encapsulate(rpcid, param)));
-		Message reply = connection.receive();
-		return RPCUtils.decapsulate(reply.getData());
-	}
-
+	public byte[] call(byte rpcid, byte[] param) {
+        connection.send(new Message(RPCUtils.encapsulate(rpcid, param)));
+        Message reply = connection.receive();
+        return RPCUtils.decapsulate(reply.getData());
+    }
 }

@@ -16,9 +16,6 @@ public class DisplayImpl extends RPCRemoteImpl {
 	}
 	
 	public byte[] invoke(byte[] param) {
-		
-		byte[] returnval = null;
-
 		String message = RPCUtils.unmarshallString(param);
 		write(message);
 		return RPCUtils.marshallVoid();

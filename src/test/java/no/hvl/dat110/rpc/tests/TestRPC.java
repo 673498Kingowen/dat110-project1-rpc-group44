@@ -6,62 +6,56 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.junit.jupiter.api.Order;
-
 import no.hvl.dat110.rpc.RPCClient;
 import no.hvl.dat110.rpc.RPCServer;
 import no.hvl.dat110.rpc.RPCClientStopStub;
 
+import java.io.IOException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @TestMethodOrder(OrderAnnotation.class)
 public class TestRPC {
 
-	private static int PORT = 8080;
-	private static String SERVER = "localhost";
+	private static final int PORT = 8080;
+	private static final String SERVER = "localhost";
 
 	@Test
 	@Order(1)
-	public void testStartStop() {
+	public void testStartStop(){
 
 		AtomicBoolean failure = new AtomicBoolean(false);
 
 		RPCClient client = new RPCClient(SERVER, PORT);
 		RPCServer server = new RPCServer(PORT);
 
-		Thread serverthread = new Thread() {
+		Thread serverthread = new Thread(() -> {
 
-			public void run() {
+            try {
+                server.run();
+            } catch (Exception e) {
+                e.printStackTrace();
+                failure.set(true);
 
-				try {
-					server.run();
-				} catch (Exception e) {
-					e.printStackTrace();
-					failure.set(true);
+            } finally {
+                server.stop();
+            }
+        });
 
-				} finally {
-					server.stop();
-				}
-			}
-		};
+		Thread clientthread = new Thread(() -> {
 
-		Thread clientthread = new Thread() {
+            try {
+                client.connect();
 
-			public void run() {
+                RPCClientStopStub stub = new RPCClientStopStub(client);
 
-				try {
-					client.connect();
+                stub.stop();
 
-					RPCClientStopStub stub = new RPCClientStopStub(client);
-
-					stub.stop();
-
-					client.disconnect();
-				} catch (Exception e) {
-					e.printStackTrace();
-					failure.set(true);
-				}
-			}
-		};
+                client.disconnect();
+            } catch (Exception e) {
+                e.printStackTrace();
+                failure.set(true);
+            }
+        });
 
 		System.out.println("System starting ... ");
 
@@ -96,22 +90,19 @@ public class TestRPC {
 
 		AtomicBoolean failure = new AtomicBoolean(false);
 		
-		Thread serverthread = new Thread() {
+		Thread serverthread = new Thread(() -> {
 
-			public void run() {
+            try {
+                TestVoidVoidImpl voidvoidimpl = new TestVoidVoidImpl((byte) 1, server);
 
-				try {
-					TestVoidVoidImpl voidvoidimpl = new TestVoidVoidImpl((byte) 1, server);
-
-					server.run();
-				} catch (Exception e) {
-					e.printStackTrace();
-					failure.set(true);
-				} finally {
-					server.stop();
-				}
-			}
-		};
+                server.run();
+            } catch (Exception e) {
+                e.printStackTrace();
+                failure.set(true);
+            } finally {
+                server.stop();
+            }
+        });
 
 		Thread clientthread = new Thread() {
 
@@ -163,7 +154,7 @@ public class TestRPC {
 
 	@Test
 	@Order(3)
-	public void testStringCall() {
+	public void testStringCall() throws IOException {
 
 		RPCClient client = new RPCClient(SERVER, PORT);
 		RPCServer server = new RPCServer(PORT);
@@ -240,7 +231,7 @@ public class TestRPC {
 
 	@Test
 	@Order(4)
-	public void testIntCall() {
+	public void testIntCall() throws IOException {
 
 		RPCClient client = new RPCClient(SERVER, PORT);
 		RPCServer server = new RPCServer(PORT);
@@ -316,7 +307,7 @@ public class TestRPC {
 
 	@Test
 	@Order(5)
-	public void testBoolCall() {
+	public void testBoolCall() throws IOException {
 
 		RPCClient client = new RPCClient(SERVER, PORT);
 		RPCServer server = new RPCServer(PORT);
@@ -401,7 +392,7 @@ public class TestRPC {
 
 	@Test
 	@Order(6)
-	public void testAllCalls() {
+	public void testAllCalls() throws IOException {
 
 		RPCClient client = new RPCClient(SERVER, PORT);
 		RPCServer server = new RPCServer(PORT);
