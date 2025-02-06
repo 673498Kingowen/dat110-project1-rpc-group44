@@ -9,7 +9,7 @@ public class DisplayStub extends RPCLocalStub {
 		super(rpcclient);
 	}
 	
-	public void write (String message) {
+	public static void write (String message) {
 		
 		// TODO - START
 		

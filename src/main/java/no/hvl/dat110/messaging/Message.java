@@ -9,13 +9,11 @@ public class Message {
 
 	// construction a Message with the data provided
 	public Message(byte[] data) {
-		
-		// TODO - START
-		
-		if (true)
-			throw new UnsupportedOperationException(TODO.constructor("Message"));
-			
-		// TODO - END
+
+		if (data == null || data.length > 127) {
+			throw new IllegalArgumentException("Data should be not null, and Data must not exceed 127 bytes");
+		}
+		this.data = data;
 	}
 
 	public byte[] getData() {

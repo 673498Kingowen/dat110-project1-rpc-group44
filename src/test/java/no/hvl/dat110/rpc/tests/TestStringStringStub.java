@@ -4,13 +4,15 @@ import no.hvl.dat110.rpc.RPCClient;
 import no.hvl.dat110.rpc.RPCLocalStub;
 import no.hvl.dat110.rpc.RPCUtils;
 
+import java.io.IOException;
+
 public class TestStringStringStub extends RPCLocalStub {
 
 	public TestStringStringStub(RPCClient rpcclient) {
 		super(rpcclient);
 	}
 	
-	public String m(String str) {
+	public String m(String str) throws IOException {
 		
 		byte[] request = RPCUtils.marshallString(str);
 		
